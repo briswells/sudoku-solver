@@ -120,18 +120,22 @@ def make_base(window):
     canvas.pack(fill=BOTH, expand=1)
     return canvas
 
-#Code Provided by dataset host https://www.kaggle.com/datasets/bryanpark/sudoku?resource=download
-def read_puzzels(filename):
+#Base code provided by dataset host https://www.kaggle.com/datasets/bryanpark/sudoku?resource=download
+def read_puzzels(filename,size):
     num_lines = sum(1 for line in open(filename))
-    quizzes = np.zeros((num_lines, 81), np.int32)
-    solutions = np.zeros((num_lines, 81), np.int32)
+    quizzes = np.zeros((num_lines-1, size**2), np.int32)
+    solutions = np.zeros((num_lines-1, size**2), np.int32)
     for i, line in enumerate(open(filename, 'r').read().splitlines()[1:]):
         quiz, solution = line.split(",")
         for j, q_s in enumerate(zip(quiz, solution)):
             q, s = q_s
+            try:
+                q = int(q)
+            except ValueError:
+                q = ord(q) - 54
             quizzes[i, j] = q
             # solutions[i, j] = s
-    quizzes = quizzes.reshape((-1, 9, 9))
+    quizzes = quizzes.reshape((-1, size, size))
     # solutions = solutions.reshape((-1, 9, 9))
     return quizzes
 
@@ -160,26 +164,47 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sudoku Solver")
     parser.add_argument("-a", "--animate", action="store_true",default=False,
                         help="Animates the solution")
-    parser.add_argument("-f", default=False, help="Provide a filename with puzzles")
+    parser.add_argument("-f", "-file", default=False, help="Provide a filename with puzzles")
+    parser.add_argument("-s", "-size", default=9,type=int, help="Puzzle size: enter 9 for a regular sudoku")
     args = parser.parse_args()
     animate = False
     if args.animate:
         animate = True
-    grid = [[3, 0, 6, 5, 0, 8, 4, 0, 0],
-          [5, 2, 0, 0, 0, 0, 0, 0, 0],
-          [0, 8, 7, 0, 0, 0, 0, 3, 1],
-          [0, 0, 3, 0, 1, 0, 0, 8, 0],
-          [9, 0, 0, 8, 6, 3, 0, 0, 5],
-          [0, 5, 0, 0, 9, 0, 6, 0, 0],
-          [1, 3, 0, 0, 0, 0, 2, 5, 0],
-          [0, 0, 0, 0, 0, 0, 0, 7, 4],
-          [0, 0, 5, 2, 0, 6, 3, 0, 0]]
+    if args.s == 9:
+        grid = [[3, 0, 6, 5, 0, 8, 4, 0, 0],
+              [5, 2, 0, 0, 0, 0, 0, 0, 0],
+              [0, 8, 7, 0, 0, 0, 0, 3, 1],
+              [0, 0, 3, 0, 1, 0, 0, 8, 0],
+              [9, 0, 0, 8, 6, 3, 0, 0, 5],
+              [0, 5, 0, 0, 9, 0, 6, 0, 0],
+              [1, 3, 0, 0, 0, 0, 2, 5, 0],
+              [0, 0, 0, 0, 0, 0, 0, 7, 4],
+              [0, 0, 5, 2, 0, 6, 3, 0, 0]]
+    if args.s == 16:
+        grid =[[9,0,0,6,0,0,14,3,5,0,0,0,0,13,0,0],
+            [0,0,0,16,0,7,0,0,8,0,0,0,5,6,0,0],
+            [4,0,0,0,8,0,12,0,2,0,6,0,0,16,0,0],
+            [0,14,11,0,0,0,0,0,4,0,3,7,0,0,0,0],
+            [15,0,14,0,6,0,0,1,0,0,0,0,0,0,0,0],
+            [0,0,4,0,0,0,3,0,0,9,0,0,7,14,0,12],
+            [0,0,0,0,2,0,8,14,6,0,12,0,0,0,0,0],
+            [0,12,8,0,7,9,16,5,0,3,11,0,0,0,6,0],
+            [0,8,0,15,0,0,0,0,0,0,0,3,2,0,0,5],
+            [3,1,0,0,14,15,0,0,13,0,0,0,0,9,11,0],
+            [5,0,0,12,0,11,0,0,0,0,16,0,0,0,13,4],
+            [11,7,13,0,0,0,4,0,0,0,15,0,0,0,0,0],
+            [0,15,0,3,0,0,11,13,16,0,14,0,0,0,0,9],
+            [7,0,0,0,5,0,0,6,0,0,0,2,0,0,1,0],
+            [1,0,16,13,4,0,0,0,0,5,0,0,0,11,8,0],
+            [0,0,5,0,0,8,1,0,0,0,9,11,3,4,0,0]]
     if args.f != False:
-        puzzles = read_puzzels('HardestDatabase.txt')
+        puzzles = read_puzzels(args.f,args.s)
         seed = randint(0,len(puzzles)-1)
         grid = puzzles[seed]
         print("Solving puzzle: {}".format(seed))
+        print_grid()
     last_value = None
     total_itrs = 0
     done = False
+    exit()
     main()
