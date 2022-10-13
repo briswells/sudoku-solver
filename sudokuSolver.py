@@ -1,10 +1,10 @@
 import sys
 from tkinter import *
-from time import sleep
+from time import sleep, time
 import numpy as np
 from random import randint
 import argparse
-from math import  sqrt
+from math import sqrt
 sleep_time = 0.085
 
 def print_grid():
@@ -167,14 +167,18 @@ def main():
         window.title = "Game"
         window.geometry("{0}x{0}".format(str(50*(max)+20)))
         canvas = make_base(window)
+    start_time = time() #starts timer here to avoid IO distorting data
     simple_cell_solver(window, canvas) #Attempts to find simple values to reduce time complexity
     last_value = find_last(grid) #Finds last blank, returns true if simple solver filled grid
     if brute_solver(window, canvas) == True or last_value == True:
         if animate:
             sleep(60) #sleeps functions to see solved grid
+        else:
+            print("Runtime: %s seconds" % (time() - start_time))
         print("solved in {} interations".format(total_itrs))
         print_grid()
     else:
+        print("Runtime: %s seconds" % (time() - start_time))
         print("No Solution Possible")
 
 if __name__ == "__main__":

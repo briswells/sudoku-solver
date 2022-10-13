@@ -1,14 +1,14 @@
 # sudoku-solver
 
-Requires tkinter library
+Only tested for 3x3 and 4x4 grids, but should work for an perfect square matrix sizes <br />
 
-Script takes 3 command line arguments:
-  [-a] will animate the solution
-  [-f [filename]] will read in a csv of puzzles,solution. All puzzles and solutions
-                  are num only strings. Will default to inbuilt puzzle if none is
-                  provided
-  [-s [int]] This is how you set grid size, default is 9 for a normal sudoku for
-             perfect squares only, grids larger than 9 replace 10 with A etc.
-Easy dataset can be found at https://www.kaggle.com/datasets/bryanpark/sudoku?resource=download
+Requires tkinter library <br />
 
-Hard dataset attached
+Script takes 3 command line arguments: <br />
+  [-a] will animate the solution <br />
+  [-f [filename]] will read in a csv of puzzles,solution. All puzzles and solutions <br />
+                  are num only strings. Will default to inbuilt puzzle if none is provided <br />
+  [-s [int]] This is how you set grid size, default is 9 for a normal sudoku for perfect squares only, grids larger than 9 replace 10 with A etc. <br />
+Easy dataset can be found at https://www.kaggle.com/datasets/bryanpark/sudoku?resource=download <br />
+<br />
+Hard dataset and 4x4 attached
