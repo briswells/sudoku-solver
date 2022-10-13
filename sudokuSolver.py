@@ -1,7 +1,8 @@
 import sys
 from tkinter import *
 from time import sleep
-
+import numpy as np
+from random import randint
 sleep_time = 0.085
 
 def print_grid():
@@ -96,7 +97,7 @@ def find_last(grid):
         for x in range(len(grid[y])-1,-1,-1):
             if grid[y][x] == 0:
                 return (y,x)
-
+    return True
 
 def make_base(window):
     global grid
@@ -114,6 +115,23 @@ def make_base(window):
     canvas.pack(fill=BOTH, expand=1)
     return canvas
 
+#Code Provided by dataset host https://www.kaggle.com/datasets/bryanpark/sudoku?resource=download
+def read_puzzels(filename):
+    num_lines = sum(1 for line in open(filename))
+    quizzes = np.zeros((num_lines, 81), np.int32)
+    solutions = np.zeros((num_lines, 81), np.int32)
+    for i, line in enumerate(open(filename, 'r').read().splitlines()[1:]):
+        quiz, solution = line.split(",")
+        for j, q_s in enumerate(zip(quiz, solution)):
+            q, s = q_s
+            quizzes[i, j] = q
+            # solutions[i, j] = s
+    quizzes = quizzes.reshape((-1, 9, 9))
+    # solutions = solutions.reshape((-1, 9, 9))
+    return quizzes
+
+
+
 def main():
     global grid
     global total_itrs
@@ -123,24 +141,21 @@ def main():
     window.geometry("470x470")
     canvas = make_base(window)
     simple_cell_solver(window, canvas)
-    if brute_solver(window, canvas) == True:
-        sleep(60)
+    global last_value
+    last_value = find_last(grid)
+    if brute_solver(window, canvas) == True or last_value == True:
+        sleep(1)
         print("solved in {} interations".format(total_itrs))
         print_grid()
     else:
         print("No Solution Possible")
 
 if __name__ == "__main__":
-    grid = [[3, 0, 6, 5, 0, 8, 4, 0, 0],
-          [5, 2, 0, 0, 0, 0, 0, 0, 0],
-          [0, 8, 7, 0, 0, 0, 0, 3, 1],
-          [0, 0, 3, 0, 1, 0, 0, 8, 0],
-          [9, 0, 0, 8, 6, 3, 0, 0, 5],
-          [0, 5, 0, 0, 9, 0, 6, 0, 0],
-          [1, 3, 0, 0, 0, 0, 2, 5, 0],
-          [0, 0, 0, 0, 0, 0, 0, 7, 4],
-          [0, 0, 5, 2, 0, 6, 3, 0, 0]]
-    last_value = find_last(grid)
+    puzzles = read_puzzels('HardestDatabase.txt')
+    seed = randint(0,len(puzzles)-1)
+    print("Solving puzzle: {}".format(seed))
+    grid = puzzles[seed]
+    last_value = None
     total_itrs = 0
     done = False
     main()
