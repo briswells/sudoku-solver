@@ -3,9 +3,9 @@ from tkinter import *
 from time import sleep
 import numpy as np
 from random import randint
+import argparse
 
 sleep_time = 0.085
-animate = True
 
 def print_grid():
     global grid
@@ -135,11 +135,10 @@ def read_puzzels(filename):
     # solutions = solutions.reshape((-1, 9, 9))
     return quizzes
 
-
-
 def main():
     global grid
     global total_itrs
+    global animate
     window = Tk()
     canvas = Canvas()
     if animate:
@@ -158,10 +157,28 @@ def main():
         print("No Solution Possible")
 
 if __name__ == "__main__":
-    puzzles = read_puzzels('HardestDatabase.txt')
-    seed = randint(0,len(puzzles)-1)
-    print("Solving puzzle: {}".format(seed))
-    grid = puzzles[seed]
+    parser = argparse.ArgumentParser(description="Sudoku Solver")
+    parser.add_argument("-a", "--animate", action="store_true",default=False,
+                        help="Animates the solution")
+    parser.add_argument("-f", default=False, help="Provide a filename with puzzles")
+    args = parser.parse_args()
+    animate = False
+    if args.animate:
+        animate = True
+    grid = [[3, 0, 6, 5, 0, 8, 4, 0, 0],
+          [5, 2, 0, 0, 0, 0, 0, 0, 0],
+          [0, 8, 7, 0, 0, 0, 0, 3, 1],
+          [0, 0, 3, 0, 1, 0, 0, 8, 0],
+          [9, 0, 0, 8, 6, 3, 0, 0, 5],
+          [0, 5, 0, 0, 9, 0, 6, 0, 0],
+          [1, 3, 0, 0, 0, 0, 2, 5, 0],
+          [0, 0, 0, 0, 0, 0, 0, 7, 4],
+          [0, 0, 5, 2, 0, 6, 3, 0, 0]]
+    if args.f != False:
+        puzzles = read_puzzels('HardestDatabase.txt')
+        seed = randint(0,len(puzzles)-1)
+        grid = puzzles[seed]
+        print("Solving puzzle: {}".format(seed))
     last_value = None
     total_itrs = 0
     done = False
