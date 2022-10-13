@@ -4,7 +4,7 @@ from time import sleep
 import numpy as np
 from random import randint
 import argparse
-
+from math import  sqrt
 sleep_time = 0.085
 
 def print_grid():
@@ -16,24 +16,27 @@ def print_grid():
 
 def check_legal(element, location):
     global grid
+    global args
+    scale_factor = int(sqrt(args.s))
     if element in grid[location[0]]:
         return False
     else:
         if element in [list[location[1]] for list in grid]:
             return False
         else:
-            box_y = int(location[0] / 3) * 3
-            box_x = int(location[1] / 3) * 3
-            for y in range(box_y,box_y+3):
-                for x in range(box_x,box_x+3):
+            box_y = int(location[0] / scale_factor) * scale_factor
+            box_x = int(location[1] / scale_factor) * scale_factor
+            for y in range(box_y,box_y+scale_factor):
+                for x in range(box_x,box_x+scale_factor):
                     if element == grid[y][x]:
                         return False
             return True
 
 def check_location(location):
     global grid
+    global args
     possible_values = []
-    for i in range(1,10):
+    for i in range(1,max+1):
         if check_legal(i, location):
             possible_values.append(i)
     if len(possible_values) > 0:
@@ -81,9 +84,12 @@ def brute_solver(window,canvas):
                         for value in possible_values:
                             grid[y][x] = value
                             if animate:
+                                entry = grid[y][x]
+                                if entry > 9:
+                                    entry = chr( entry + 55)
                                 label = 'entry:{}{}'.format(y,x)
                                 number = canvas.create_text(35+50*x, 35+50*y, font=("Purisa",'30','bold'),
-                                text=grid[y][x],justify=CENTER, anchor=CENTER,fill='#d12828',
+                                text=entry,justify=CENTER, anchor=CENTER,fill='#d12828',
                                 tag=label)
                                 window.update()
                                 sleep(sleep_time)
@@ -106,21 +112,26 @@ def find_last(grid):
 
 def make_base(window):
     global grid
-    canvas = Canvas(window, width=470, height=470, bd=0, highlightthickness=0)
-    for i in range(10):
-        canvas.create_line(10, i*50+10, 460, i*50+10 )
-        canvas.create_line(i*50+10, 10, i*50+10, 460 )
-    for y in range(9):
-        for x in range(9):
+    global max
+    canvas = Canvas(window, width=50*(max)+20, height=50*(max)+2, bd=0, highlightthickness=0)
+    for i in range(max+1):
+        canvas.create_line(10, i*50+10, 50*(max)+10, i*50+10 )
+        canvas.create_line(i*50+10, 10, i*50+10, 50*(max)+10 )
+    for y in range(max):
+        for x in range(max):
             if grid[y][x] != 0:
+                entry = grid[y][x]
+                if entry > 9:
+                    entry = chr( entry + 55)
                 label = 'entry:{}{}'.format(y,x)
                 canvas.create_text(35+50*x, 35+50*y, font=("Purisa",'30','bold'),
-                text=grid[y][x],justify=CENTER, anchor=CENTER,fill='#2622a3',
+                text=entry,justify=CENTER, anchor=CENTER,fill='#2622a3',
                 tag=label)
     canvas.pack(fill=BOTH, expand=1)
     return canvas
 
 #Base code provided by dataset host https://www.kaggle.com/datasets/bryanpark/sudoku?resource=download
+#Then modified to accept more grid types
 def read_puzzels(filename,size):
     num_lines = sum(1 for line in open(filename))
     quizzes = np.zeros((num_lines-1, size**2), np.int32)
@@ -132,7 +143,7 @@ def read_puzzels(filename,size):
             try:
                 q = int(q)
             except ValueError:
-                q = ord(q) - 54
+                q = ord(q) - 55
             quizzes[i, j] = q
             # solutions[i, j] = s
     quizzes = quizzes.reshape((-1, size, size))
@@ -143,12 +154,13 @@ def main():
     global grid
     global total_itrs
     global animate
+    global max
     window = Tk()
     canvas = Canvas()
     if animate:
         window.title("Sudoku Solver")
         window.title = "Game"
-        window.geometry("470x470")
+        window.geometry("{0}x{0}".format(str(50*(max)+20)))
         canvas = make_base(window)
     simple_cell_solver(window, canvas)
     global last_value
@@ -202,9 +214,8 @@ if __name__ == "__main__":
         seed = randint(0,len(puzzles)-1)
         grid = puzzles[seed]
         print("Solving puzzle: {}".format(seed))
-        print_grid()
+    max = max([max(list) for list in grid])
     last_value = None
     total_itrs = 0
     done = False
-    exit()
     main()
