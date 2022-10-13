@@ -3,7 +3,9 @@ from tkinter import *
 from time import sleep
 import numpy as np
 from random import randint
+
 sleep_time = 0.085
+animate = True
 
 def print_grid():
     global grid
@@ -52,12 +54,13 @@ def simple_cell_solver(window,canvas):
                     if len(possible_values) == 1:
                         found_simple = True
                         grid[y][x] = possible_values[0]
-                        label = 'entry:{}{}'.format(y,x)
-                        number = canvas.create_text(35+50*x, 35+50*y, font=("Purisa",'30','bold'),
-                        text=grid[y][x],justify=CENTER, anchor=CENTER,fill='#3fba2f',
-                        tag=label)
-                        window.update()
-                        sleep(sleep_time)
+                        if animate:
+                            label = 'entry:{}{}'.format(y,x)
+                            number = canvas.create_text(35+50*x, 35+50*y, font=("Purisa",'30','bold'),
+                            text=grid[y][x],justify=CENTER, anchor=CENTER,fill='#3fba2f',
+                            tag=label)
+                            window.update()
+                            sleep(sleep_time)
         if found_simple == False:
             return
 
@@ -77,19 +80,21 @@ def brute_solver(window,canvas):
                     else:
                         for value in possible_values:
                             grid[y][x] = value
-                            label = 'entry:{}{}'.format(y,x)
-                            number = canvas.create_text(35+50*x, 35+50*y, font=("Purisa",'30','bold'),
-                            text=grid[y][x],justify=CENTER, anchor=CENTER,fill='#d12828',
-                            tag=label)
-                            window.update()
-                            sleep(sleep_time)
+                            if animate:
+                                label = 'entry:{}{}'.format(y,x)
+                                number = canvas.create_text(35+50*x, 35+50*y, font=("Purisa",'30','bold'),
+                                text=grid[y][x],justify=CENTER, anchor=CENTER,fill='#d12828',
+                                tag=label)
+                                window.update()
+                                sleep(sleep_time)
                             brute_solver(window,canvas)
                             if grid[last_value[0]][last_value[1]] != 0:
                                 return True
                             grid[y][x] = 0
-                            canvas.delete(number)
-                            window.update()
-                            sleep(sleep_time)
+                            if animate:
+                                canvas.delete(number)
+                                window.update()
+                                sleep(sleep_time)
                         return True
 
 def find_last(grid):
@@ -136,10 +141,12 @@ def main():
     global grid
     global total_itrs
     window = Tk()
-    window.title("Sudoku Solver")
-    window.title = "Game"
-    window.geometry("470x470")
-    canvas = make_base(window)
+    canvas = Canvas()
+    if animate:
+        window.title("Sudoku Solver")
+        window.title = "Game"
+        window.geometry("470x470")
+        canvas = make_base(window)
     simple_cell_solver(window, canvas)
     global last_value
     last_value = find_last(grid)
