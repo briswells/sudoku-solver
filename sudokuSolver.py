@@ -119,8 +119,11 @@ def make_base(window):
     global args
     canvas = Canvas(window, width=50*(args.s)+20, height=50*(args.s)+2, bd=0, highlightthickness=0)
     for i in range(args.s+1):
-        canvas.create_line(10, i*50+10, 50*(args.s)+10, i*50+10 )
-        canvas.create_line(i*50+10, 10, i*50+10, 50*(args.s)+10 )
+        thickness = 1
+        if i % sqrt(args.s) == 0:
+            thickness = 4
+        canvas.create_line(10, i*50+10, 50*(args.s)+10, i*50+10,width=thickness )
+        canvas.create_line(i*50+10, 10, i*50+10, 50*(args.s)+10,width=thickness )
     for y in range(args.s):
         for x in range(args.s):
             if grid[y][x] != 0:
@@ -129,7 +132,7 @@ def make_base(window):
                     entry = chr( entry + 55)
                 label = 'entry:{}{}'.format(y,x)
                 canvas.create_text(35+50*x, 35+50*y, font=("Purisa",'30','bold'),
-                text=entry,justify=CENTER, anchor=CENTER,fill='#2622a3',
+                text=entry,justify=CENTER, anchor=CENTER,fill='#4d47c4',
                 tag=label)
     canvas.pack(fill=BOTH, expand=1)
     return canvas
@@ -190,6 +193,7 @@ if __name__ == "__main__":
     parser.add_argument("-s", "-size", default=9,type=int, help="Puzzle size: enter 9 for a regular sudoku")
     args = parser.parse_args()
     animate = False
+    puzzles = []
     if args.animate:
         animate = True
     #Base grids for tested matrix sizes
