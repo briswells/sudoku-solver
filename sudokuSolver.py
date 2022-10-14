@@ -5,7 +5,7 @@ import numpy as np
 from random import randint
 import argparse
 from math import sqrt
-sleep_time = 0.085
+sleep_time = 0.0001
 
 def print_grid():
     global grid
@@ -37,7 +37,7 @@ def check_location(location):
     global grid
     global args
     possible_values = []
-    for i in range(1,max+1):
+    for i in range(1,args.s+1):
         if check_legal(i, location):
             possible_values.append(i)
     if len(possible_values) > 0:
@@ -116,13 +116,13 @@ def find_last(grid):
 #Creates animation window with base values
 def make_base(window):
     global grid
-    global max
-    canvas = Canvas(window, width=50*(max)+20, height=50*(max)+2, bd=0, highlightthickness=0)
-    for i in range(max+1):
-        canvas.create_line(10, i*50+10, 50*(max)+10, i*50+10 )
-        canvas.create_line(i*50+10, 10, i*50+10, 50*(max)+10 )
-    for y in range(max):
-        for x in range(max):
+    global args
+    canvas = Canvas(window, width=50*(args.s)+20, height=50*(args.s)+2, bd=0, highlightthickness=0)
+    for i in range(args.s+1):
+        canvas.create_line(10, i*50+10, 50*(args.s)+10, i*50+10 )
+        canvas.create_line(i*50+10, 10, i*50+10, 50*(args.s)+10 )
+    for y in range(args.s):
+        for x in range(args.s):
             if grid[y][x] != 0:
                 entry = grid[y][x]
                 if entry > 9:
@@ -137,7 +137,7 @@ def make_base(window):
 #Reads in puzzle files and parses them into grid
 #Base code provided by dataset host https://www.kaggle.com/datasets/bryanpark/sudoku?resource=download
 #Then modified to accept more grid types
-def read_puzzels(filename,size):
+def read_puzzles(filename,size):
     num_lines = sum(1 for line in open(filename))
     quizzes = np.zeros((num_lines-1, size**2), np.int32)
     solutions = np.zeros((num_lines-1, size**2), np.int32)
@@ -158,14 +158,14 @@ def main():
     global grid
     global total_itrs
     global animate
-    global max
+    global args
     global last_value
     window = Tk()
     canvas = Canvas()
     if animate:
         window.title("Sudoku Solver")
         window.title = "Game"
-        window.geometry("{0}x{0}".format(str(50*(max)+20)))
+        window.geometry("{0}x{0}".format(str(50*(args.s)+20)))
         canvas = make_base(window)
     start_time = time() #starts timer here to avoid IO distorting data
     simple_cell_solver(window, canvas) #Attempts to find simple values to reduce time complexity
@@ -221,12 +221,11 @@ if __name__ == "__main__":
             [1,0,16,13,4,0,0,0,0,5,0,0,0,11,8,0],
             [0,0,5,0,0,8,1,0,0,0,9,11,3,4,0,0]]
     if args.f != False: #reads in puzzle files and solves random puzzle
-        puzzles = read_puzzels(args.f,args.s)
+        puzzles = read_puzzles(args.f,args.s)
         seed = randint(0,len(puzzles)-1)
         grid = puzzles[seed]
         print("Solving puzzle: {}".format(seed))
-    max = args.s #Counts total runs through matrix
     last_value = None
-    total_itrs = 0
+    total_itrs = 0 #Counts total runs through matrix
     done = False
     main()
