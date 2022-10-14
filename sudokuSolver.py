@@ -69,6 +69,38 @@ def simple_cell_solver(window,canvas):
         if found_simple == False:
             return
 
+def naked_pairs():
+    global pair_grid
+    global total_itrs
+    meta_grid = np.zeros((num_lines-1, args.s**2), np.int32)
+    meta_grid = meta_grid.reshape((-1, args.s, args.s))
+    scale_factor = int(sqrt(args.s))
+    total_itrs += 4
+    for y in range(len(grid)):
+        for x in range(len(grid[y])):
+            possible_values = check_location((y,x))
+            if len(possible_values) == 2:
+                meta_grid[y][x] = possible_values
+    for y in range(0,scale_factor):
+        for x in range(0,scale_factor):
+            pairs = {}
+            for y_loc in range(y*scale_factor,y*(scale_factor+1)):
+                for x_loc in range(x*scale_factor,x*(scale_factor+1)):
+                    if meta_grid[y_loc][x_loc] != 0:
+                        key = str(meta_grid[y_loc][x_loc][0]) + str(meta_grid[y_loc][x_loc][1])
+                        if key in pairs.keys():
+                            pairs[key][1] += 1
+                            pairs[key][0].append((y_loc,x_loc))
+                        else:
+                            pairs[key] = [[(y_loc,x_loc)],1]
+            for key,pair in pairs:
+                if pair[1] == 2:
+                    for y_loc in range(y*scale_factor,y*(scale_factor+1)):
+                        for x_loc in range(x*scale_factor,x*(scale_factor+1)):
+                            if (y_loc,x_loc) not in pair[0]:
+                                pair_grid[y_loc][x_loc] = [int(x) for x in key]
+
+
 #Recursive function that tries all possiblities until solution is found
 def brute_solver(window,canvas):
     if not done:
@@ -228,4 +260,6 @@ if __name__ == "__main__":
     last_value = None
     total_itrs = 0 #Counts total runs through matrix
     done = False
+    pair_grid = np.zeros((num_lines-1, args.s**2), np.int32)
+    pair_grid = meta_grid.reshape((-1, args.s, args.s))
     main()
