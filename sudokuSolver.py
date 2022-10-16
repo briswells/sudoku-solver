@@ -101,15 +101,25 @@ def main():
     global total_itrs
     global args
     global last_value
-    start_time = time() #starts timer here to avoid IO distorting data
-    last_value = find_last(grid) #Finds last blank, returns true if simple solver filled grid
-    if brute_solver() == True or last_value == True:
-        print("Runtime: %s seconds" % (time() - start_time))
-        print("solved in {} interations".format(total_itrs))
+    ave_time = 0
+    ave_iters = 0
+    puzzles = read_puzzles(args.f,args.s)
+    for i in range(args.i):
+        if args.f != False: #reads in puzzle files and solves random puzzle
+            seed = randint(0,len(puzzles)-1)
+            grid = puzzles[seed]
+            print_grid()
+        total_itrs = 0
+        start_time = time() #starts timer here to avoid IO distorting data
+        last_value = find_last(grid) #Finds last blank, returns true if simple solver filled grid
+        brute_solver()
+        print("Solved problem {}".format(i))
+        ave_time += time() - start_time
+        ave_iters += total_itrs
         print_grid()
-    else:
-        print("Runtime: %s seconds" % (time() - start_time))
-        print("No Solution Possible")
+    print("Solve {} puzzles".format(args.i))
+    print("Average runtime: %s seconds" % (ave_time / args.i))
+    print("Solved in an average of {} interations".format(ave_iters / args.i))
 
 if __name__ == "__main__":
     #Parces command line args
@@ -118,6 +128,7 @@ if __name__ == "__main__":
                         help="Animates the solution")
     parser.add_argument("-f", "-file", default=False, help="Provide a filename with puzzles")
     parser.add_argument("-s", "-size", default=9,type=int, help="Puzzle size: enter 9 for a regular sudoku")
+    parser.add_argument("-i", "-iters", default=1,type=int, help="Number of Puzzles to be tested")
     args = parser.parse_args()
     puzzles = []
     #Base grids for tested matrix sizes
@@ -148,11 +159,6 @@ if __name__ == "__main__":
             [7,0,0,0,5,0,0,6,0,0,0,2,0,0,1,0],
             [1,0,16,13,4,0,0,0,0,5,0,0,0,11,8,0],
             [0,0,5,0,0,8,1,0,0,0,9,11,3,4,0,0]]
-    if args.f != False: #reads in puzzle files and solves random puzzle
-        puzzles = read_puzzles(args.f,args.s)
-        seed = randint(0,len(puzzles)-1)
-        grid = puzzles[seed]
-        print("Solving puzzle: {}".format(seed))
     last_value = None
     total_itrs = 0 #Counts total runs through matrix
     done = False
