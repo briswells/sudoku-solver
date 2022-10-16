@@ -5,7 +5,11 @@ import numpy as np
 from random import randint
 import argparse
 from math import sqrt
+import matplotlib.pyplot as plt
 sleep_time = 0.065
+
+def average(list):
+    return sum(list) / len(list)
 
 def print_grid():
     global grid
@@ -101,8 +105,8 @@ def main():
     global total_itrs
     global args
     global last_value
-    ave_time = 0
-    ave_iters = 0
+    ave_time = []
+    ave_iters = []
     puzzles = read_puzzles(args.f,args.s)
     for i in range(args.i):
         if args.f != False: #reads in puzzle files and solves random puzzle
@@ -114,12 +118,16 @@ def main():
         last_value = find_last(grid) #Finds last blank, returns true if simple solver filled grid
         brute_solver()
         print("Solved problem {}".format(i))
-        ave_time += time() - start_time
-        ave_iters += total_itrs
+        ave_time.append(time() - start_time)
+        ave_iters.append(total_itrs)
         print_grid()
     print("Solve {} puzzles".format(args.i))
-    print("Average runtime: %s seconds" % (ave_time / args.i))
-    print("Solved in an average of {} interations".format(ave_iters / args.i))
+    print("Average runtime: %s seconds" % (average(ave_time)))
+    print("Solved in an average of {} interations".format(average(ave_iters)))
+    plt.hist(ave_time)
+    plt.savefig('{}_{}'.format(ave_time,args.i))
+    plt.hist(ave_iters)
+    plt.savefig('{}_{}'.format(ave_iters,args.i))
 
 if __name__ == "__main__":
     #Parces command line args
