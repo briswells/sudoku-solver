@@ -5,7 +5,7 @@ import numpy as np
 from random import randint
 import argparse
 from math import sqrt
-sleep_time = 0.0001
+sleep_time = 0.065
 
 def print_grid():
     global grid
@@ -36,14 +36,27 @@ def check_legal(element, location):
 def check_location(location):
     global grid
     global args
+    global possible_grid
     possible_values = []
-    for i in range(1,args.s+1):
+    for i in possible_grid[location[0]][location[1]]:
         if check_legal(i, location):
             possible_values.append(i)
     if len(possible_values) > 0:
         return possible_values
     else:
         return False
+
+def generate_possible_grid():
+    global total_itrs
+    global grid
+    global possible_grid
+    total_itrs += 1
+    for y in range(len(grid)):
+        for x in range(len(grid[y])):
+            if grid[y][x] != 0:
+                possible_values = check_location((y,x))
+                if possible_values:
+                    possible_grid[y][x] = possible_values
 
 #Scans grid for cells that can only have one value before main algorithm
 def simple_cell_solver(window,canvas):
@@ -163,6 +176,8 @@ def main():
     global animate
     global args
     global last_value
+    global possible_grid
+    generate_possible_grid()
     window = Tk()
     canvas = Canvas()
     if animate:
@@ -232,4 +247,10 @@ if __name__ == "__main__":
     last_value = None
     total_itrs = 0 #Counts total runs through matrix
     done = False
+    possible_grid = []
+    for i in range(1, args.s+1):
+        row = []
+        for j in range(1, args.s+1):
+            row.append(list(range(1, args.s+1)))
+        possible_grid.append(row)
     main()
