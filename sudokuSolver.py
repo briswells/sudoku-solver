@@ -1,5 +1,5 @@
 import sys
-from tkinter import *
+from tk import *
 from time import sleep, time
 import numpy as np
 from random import randint
@@ -125,9 +125,9 @@ def main():
     print("Average runtime: %s seconds" % (average(ave_time)))
     print("Solved in an average of {} interations".format(average(ave_iters)))
     plt.hist(ave_time)
-    plt.savefig('{}_{}'.format(ave_time,args.i))
+    plt.savefig('{}_{}.png'.format(ave_time,args.i))
     plt.hist(ave_iters)
-    plt.savefig('{}_{}'.format(ave_iters,args.i))
+    plt.savefig('{}_{}.png'.format(ave_iters,args.i))
 
 if __name__ == "__main__":
     #Parces command line args
