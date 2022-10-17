@@ -127,9 +127,9 @@ def main():
     print("Average runtime: %s seconds" % (average(ave_time)))
     print("Solved in an average of {} interations".format(average(ave_iters)))
     plt.hist(ave_time)
-    plt.savefig('{}_{}.png'.format(ave_time,args.i))
+    plt.savefig('ave_time_{}.png'.format(args.i))
     plt.hist(ave_iters)
-    plt.savefig('{}_{}.png'.format(ave_iters,args.i))
+    plt.savefig('ave_iters_{}.png'.format(args.i))
 
 if __name__ == "__main__":
     #Parces command line args
