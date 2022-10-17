@@ -128,6 +128,7 @@ def main():
     print("Solved in an average of {} interations".format(average(ave_iters)))
     plt.hist(np.log10(ave_time))
     plt.savefig('ave_time_{}.png'.format(args.i))
+    plt.clf()
     plt.hist(np.log10(ave_iters))
     plt.savefig('ave_iters_{}.png'.format(args.i))
 
