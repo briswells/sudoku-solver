@@ -2,7 +2,7 @@ import sys
 from tk import *
 from time import sleep, time
 import numpy as np
-from random import randint
+from random import randint, sample
 import argparse
 from math import sqrt
 import matplotlib.pyplot as plt
@@ -108,10 +108,12 @@ def main():
     ave_time = []
     ave_iters = []
     puzzles = read_puzzles(args.f,args.s)
+    if args.f != False: #reads in puzzle files and solves random puzzle
+        samples = sample(range(0,len(puzzles)-1), args.i)
+
     for i in range(args.i):
-        if args.f != False: #reads in puzzle files and solves random puzzle
-            seed = randint(0,len(puzzles)-1)
-            grid = puzzles[seed]
+        if args.f != False:
+            grid = puzzles[samples[i]]
             print_grid()
         total_itrs = 0
         start_time = time() #starts timer here to avoid IO distorting data
