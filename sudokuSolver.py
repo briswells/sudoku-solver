@@ -117,7 +117,7 @@ def main():
             print_grid()
         total_itrs = 0
         start_time = time() #starts timer here to avoid IO distorting data
-        last_value = find_last(grid) 
+        last_value = find_last(grid)
         brute_solver()
         print("Solved problem {}".format(i))
         ave_time.append(time() - start_time)
@@ -127,9 +127,15 @@ def main():
     print("Average runtime: %s seconds" % (average(ave_time)))
     print("Solved in an average of {} interations".format(average(ave_iters)))
     plt.hist(np.log10(ave_time), bins = 20)
+    plt.xlabel('Time Taken (Sec)')
+    plt.ylabel('Frequency')
+    plt.title('Logged Sudoku Solve Time')
     plt.savefig('ave_time_{}.png'.format(args.i))
     plt.clf()
     plt.hist(np.log10(ave_iters), bins=20)
+    plt.xlabel('Total Iterations (Matrix Scans)')
+    plt.ylabel('Frequency')
+    plt.title('Logged Sudoku Solve Time')
     plt.savefig('ave_iters_{}.png'.format(args.i))
 
 if __name__ == "__main__":
