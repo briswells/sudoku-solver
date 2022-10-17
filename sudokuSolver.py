@@ -126,9 +126,9 @@ def main():
     print("Solve {} puzzles".format(args.i))
     print("Average runtime: %s seconds" % (average(ave_time)))
     print("Solved in an average of {} interations".format(average(ave_iters)))
-    plt.hist(ave_time)
+    plt.hist(np.log10(ave_time))
     plt.savefig('ave_time_{}.png'.format(args.i))
-    plt.hist(ave_iters)
+    plt.hist(np.log10(ave_iters))
     plt.savefig('ave_iters_{}.png'.format(args.i))
 
 if __name__ == "__main__":
